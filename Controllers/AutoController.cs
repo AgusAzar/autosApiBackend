@@ -79,5 +79,24 @@ namespace AutosApi.Controllers
             }
             return new JsonResult("Updated successfully");
         }
+        [HttpDelete]
+        public JsonResult Delete(int id){
+            string query = @"delete from autos where id = @id ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("Default");
+            MySqlDataReader myReader;
+            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
+                mycon.Open();
+                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
+                    mycommand.Parameters.AddWithValue("@id", id);
+                    myReader=mycommand.ExecuteReader();
+                    table.Load(myReader);
+
+                    myReader.Close();
+                    mycon.Close();
+                }
+            }
+            return new JsonResult("Deleted successfully");
+        }
     }
 }
