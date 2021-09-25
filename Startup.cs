@@ -11,7 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using AutosApi.Context;
 
 namespace AutosApi
 {
@@ -29,11 +31,7 @@ namespace AutosApi
         {
 
             //Enable CORS
-            services.AddCors(c=>{
-                c.AddPolicy("AllowOrigin", options=> options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            });
-
-
+            services.AddCors();
             //JSON Serializer
             services.AddControllersWithViews().AddNewtonsoftJson(options=>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
@@ -43,14 +41,15 @@ namespace AutosApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AutosApi", Version = "v1" });
             });
+            string sqlDataSource = Configuration.GetConnectionString("Default");
+            services.AddDbContext<AppDbContext>(options => options.UseMySql(sqlDataSource,ServerVersion.AutoDetect(sqlDataSource)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //Enable CORS
-            app.UseCors(options=> options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
+            app.UseCors( options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

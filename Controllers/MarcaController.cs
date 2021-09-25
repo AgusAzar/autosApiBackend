@@ -1,98 +1,92 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
 using AutosApi.Models;
+using AutosApi.Context;
 
 namespace AutosApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MarcaController : ControllerBase {
-        private readonly IConfiguration _configuration;
-        public MarcaController(IConfiguration configuration){
-            _configuration = configuration;
+    public class MarcaController : ControllerBase
+    {
+
+        private readonly AppDbContext _context;
+        public MarcaController(AppDbContext context){
+            _context = context;
         }
         [HttpGet]
-        public JsonResult Get(){
-            string query = @"select * from marcas ;";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
+        public async Task<IActionResult> Get(){
+            try
+            {
+                var listMarcas = await _context.marcas.ToListAsync();
+                return Ok(listMarcas);
             }
-            return new JsonResult(table);
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id){
+            try
+            {
+                Marca marca = await _context.marcas.FindAsync(id);
+                if(marca == null){
+                    return NotFound();
+                }
+                return Ok(marca);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPost]
-        public JsonResult Post(Marca marca){
-            string query = @"insert into marcas (marca) values (@marca)";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    mycommand.Parameters.AddWithValue("@marca",marca.MarcaName);
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
+        public async Task<IActionResult> Post(Marca marca){
+            try
+            {
+                _context.Add(marca);
+                await _context.SaveChangesAsync();
+                return Ok(marca);
             }
-            return new JsonResult("Added successfully");
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPut]
-        public JsonResult Put(Marca marca){
-            string query = @"update marcas set  marca = @marca where id = @id ";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    mycommand.Parameters.AddWithValue("@id", marca.Id);
-                    mycommand.Parameters.AddWithValue("@marca",marca.MarcaName);
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
+        public async Task<IActionResult> Put(Marca marca){
+            try
+            {
+                _context.Update(marca);
+                await _context.SaveChangesAsync();
+                return Ok(marca);
             }
-            return new JsonResult("Updated successfully");
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete]
-        public JsonResult Delete(int id){
-            string query = @"delete from marcas where id = @id ";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    mycommand.Parameters.AddWithValue("@id", id);
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
+        public async Task<IActionResult> Delete(int id){
+            try
+            {
+                var marca = await _context.marcas.FindAsync(id);
+                if(marca == null){
+                    return NotFound();
                 }
+                _context.marcas.Remove(marca);
+                await _context.SaveChangesAsync();
+                return Ok( new { message= "Marca eliminado ccon exito" } );
             }
-            return new JsonResult("Deleted successfully");
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
     }
 }

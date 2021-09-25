@@ -3,100 +3,89 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
 using AutosApi.Models;
+using AutosApi.Context;
 
 namespace AutosApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class AutosController : ControllerBase {
-        private readonly IConfiguration _configuration;
-        public AutosController(IConfiguration configuration){
-            _configuration = configuration;
+        private readonly AppDbContext _context;
+        public AutosController(AppDbContext context){
+            _context = context;
         }
         [HttpGet]
-        public JsonResult Get(){
-            string query = @"select * from autos ;";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
+        public async Task<IActionResult> Get(){
+            try
+            {
+                var listAutos = await _context.autos.Include(a=>a.MarcaActual).ToListAsync();
+                return Ok(listAutos);
             }
-            return new JsonResult(table);
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id){
+            try
+            {
+                Auto auto = await _context.autos.Where(a => a.AutoId == id).Include(a => a.MarcaActual).FirstOrDefaultAsync();
+                if(auto == null){
+                    return NotFound();
+                }
+                return Ok(auto);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPost]
-        public JsonResult Post(Auto auto){
-            string query = @"insert into autos (modelo,fotoUrl,marcaId) values (@modelo,@fotoUrl,@marcaId)";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    mycommand.Parameters.AddWithValue("@modelo",auto.Modelo);
-                    mycommand.Parameters.AddWithValue("@fotoUrl",auto.FotoUrl);
-                    mycommand.Parameters.AddWithValue("@marcaId",auto.MarcaId);
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
+        public async Task<IActionResult> Post(Auto auto){
+            try
+            {
+                _context.Add(auto);
+                await _context.SaveChangesAsync();
+                return Ok(auto);
             }
-            return new JsonResult("Added successfully");
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPut]
-        public JsonResult Put(Auto auto){
-            string query = @"update autos set modelo = @modelo, fotoUrl = @fotoUrl, marcaId = @marcaId where id = @id ";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    mycommand.Parameters.AddWithValue("@id", auto.Id);
-                    mycommand.Parameters.AddWithValue("@modelo",auto.Modelo);
-                    mycommand.Parameters.AddWithValue("@fotoUrl",auto.FotoUrl);
-                    mycommand.Parameters.AddWithValue("@marcaId",auto.MarcaId);
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
+        public async Task<IActionResult> Put(Auto auto){
+            try
+            {
+                _context.Update(auto);
+                await _context.SaveChangesAsync();
+                return Ok(auto);
             }
-            return new JsonResult("Updated successfully");
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete]
-        public JsonResult Delete(int id){
-            string query = @"delete from autos where id = @id ";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("Default");
-            MySqlDataReader myReader;
-            using(MySqlConnection mycon = new MySqlConnection(sqlDataSource)){
-                mycon.Open();
-                using(MySqlCommand mycommand = new MySqlCommand(query,mycon)){
-                    mycommand.Parameters.AddWithValue("@id", id);
-                    myReader=mycommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
+        public async Task<IActionResult> Delete(int id){
+            try
+            {
+                var auto = await _context.autos.FindAsync(id);
+                if(auto == null){
+                    return NotFound();
                 }
+                _context.autos.Remove(auto);
+                await _context.SaveChangesAsync();
+                return Ok( new { message= "Auto eliminado ccon exito" } );
             }
-            return new JsonResult("Deleted successfully");
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
     }
 }
