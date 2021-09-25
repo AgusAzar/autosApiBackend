@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oOHOQ5xKxCsLRHVnZ4K0KjYcfCCYdZ/EqAxxVIrUt3fHExPNEaLFUFfX4l93o7s+HovvzTL+NvUkWbEE1MfJmA==",
+  "dgSpecHash": "Sq28Ay2DL6jb1pN5s4GEJDayYmE/aQVs8xoPOWnmEkgndfa3B+3GpyFw2HePrlLultktqe2XHtPCNXmaCzlx5w==",
   "success": true,
-  "projectFilePath": "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj",
+  "projectFilePath": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj",
   "expectedPackageFiles": [
     "/home/agustin/.nuget/packages/bouncycastle.netcore/1.8.5/bouncycastle.netcore.1.8.5.nupkg.sha512",
     "/home/agustin/.nuget/packages/google.protobuf/3.14.0/google.protobuf.3.14.0.nupkg.sha512",

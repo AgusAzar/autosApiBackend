@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace AutosApi.Controllers
         public async Task<IActionResult> Get(){
             try
             {
-                var listMarcas = await _context.marcas.ToListAsync();
+                var listMarcas = await _context.marcas.Include(m=>m.Autos).ToListAsync();
                 return Ok(listMarcas);
             }
             catch(Exception ex)
@@ -74,13 +75,16 @@ namespace AutosApi.Controllers
         public async Task<IActionResult> Delete(int id){
             try
             {
-                var marca = await _context.marcas.FindAsync(id);
+                Marca marca = await _context.marcas.Where(m => m.MarcaId == id).Include(m => m.Autos).FirstOrDefaultAsync();
                 if(marca == null){
                     return NotFound();
                 }
-                _context.marcas.Remove(marca);
-                await _context.SaveChangesAsync();
-                return Ok( new { message= "Marca eliminado ccon exito" } );
+                if( marca.Autos.Count() == 0 ){
+                    _context.marcas.Remove(marca);
+                    await _context.SaveChangesAsync();
+                    return Ok( new { message= "Marca eliminado ccon exito" } );
+                }
+                throw new Exception("La marca contiene autos" );
             }
             catch(Exception ex)
             {

@@ -10,6 +10,6 @@ namespace AutosApi.Models
         public int MarcaId { get; set; }
         public string Name { get; set; }
 
-        public List<Auto> Autos { get; } = new List<Auto>();
+        public ICollection<Auto> Autos { get; } = new List<Auto>();
     }
 }

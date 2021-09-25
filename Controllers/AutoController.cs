@@ -47,7 +47,8 @@ namespace AutosApi.Controllers
         public async Task<IActionResult> Post(Auto auto){
             try
             {
-                _context.Add(auto);
+                Marca marca = _context.marcas.Find(auto.MarcaId);
+                marca.Autos.Add(auto);
                 await _context.SaveChangesAsync();
                 return Ok(auto);
             }

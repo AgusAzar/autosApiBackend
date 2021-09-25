@@ -2165,11 +2165,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj",
+      "projectUniqueName": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj",
       "projectName": "AutosApi",
-      "projectPath": "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj",
+      "projectPath": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj",
       "packagesPath": "/home/agustin/.nuget/packages/",
-      "outputPath": "/home/agustin/Documents/proyectos/dotnet/AutosApi/obj/",
+      "outputPath": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/agustin/.nuget/NuGet/NuGet.Config"
