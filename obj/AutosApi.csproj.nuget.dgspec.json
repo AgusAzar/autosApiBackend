@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj": {}
+    "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj": {}
   },
   "projects": {
-    "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj": {
+    "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj",
+        "projectUniqueName": "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj",
         "projectName": "AutosApi",
-        "projectPath": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/AutosApi.csproj",
+        "projectPath": "/home/agustin/Documents/proyectos/dotnet/AutosApi/AutosApi.csproj",
         "packagesPath": "/home/agustin/.nuget/packages/",
-        "outputPath": "/home/agustin/Documents/proyects/proyectoAutos/autosApiBackend/obj/",
+        "outputPath": "/home/agustin/Documents/proyectos/dotnet/AutosApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/agustin/.nuget/NuGet/NuGet.Config"

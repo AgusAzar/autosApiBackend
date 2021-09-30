@@ -71,7 +71,7 @@ namespace AutosApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id){
             try
             {
